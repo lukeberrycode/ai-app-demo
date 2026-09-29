@@ -47,6 +47,7 @@ Rules for the core:
 - No hidden inputs. Anything that varies at runtime is passed in as an argument. For example, the "invoice date is not in the future" rule takes `today` as a parameter rather than reading the clock.
 - Money is already integer pence, so tolerance checks (±1p) are plain integer arithmetic and need no helpers.
 - Enforce the boundary with an ESLint override for `src/core/**` (`no-restricted-imports` for packages and paths outside `src/core/`, `no-restricted-globals` for `window`, `document`, `fetch`, `localStorage`). Set this up in Step 0.
+- `eslint.config.js` generates the relative-import override once per directory depth under `src/core/`, up to `CORE_MAX_DEPTH` (currently 4). Raise it if `src/core/` gains deeper folders.
 
 ---
 
@@ -57,7 +58,8 @@ Rules for the core:
 - The front end is a static site built with Vite and TypeScript, hosted on Netlify.
 - The back end is a single Netlify Function (TypeScript) at `/.netlify/functions/extract`. It works like a small Express endpoint: the browser posts the file to it, and the function calls the model.
 - The model API key is stored only as a Netlify environment variable. It is never sent to the browser or committed to the repo. Local development uses `.env`, which is git-ignored, via `netlify dev`.
-- The Anthropic key is named `CLAUDE_API_KEY`. `netlify dev` can inject its own `ANTHROPIC_API_KEY` and `ANTHROPIC_BASE_URL` (Netlify AI Gateway), which would replace a key with the standard name. The adapter passes `apiKey` and `baseURL` to the SDK explicitly, so calls always go straight to Anthropic on the project's own account and spend limit.
+- The Anthropic key is named `CLAUDE_API_KEY`. `netlify dev` injects its own `ANTHROPIC_API_KEY` and `ANTHROPIC_BASE_URL` (Netlify AI Gateway, pointing at `<site>/.netlify/ai`), which replaces a key with the standard name. These are added by the CLI at runtime and do not appear in `netlify env:list` or the Netlify UI. The adapter passes `apiKey` and `baseURL` to the SDK explicitly, so calls always go straight to Anthropic on the project's own account and spend limit.
+- Environment variables are available in every scope, builds included (per-scope settings need a paid Netlify plan). The key stays out of the bundle because Vite exposes only `VITE_`-prefixed variables to front-end code and nothing in `src/` reads `process.env`. The key never takes a `VITE_` prefix, and `vite.config.ts` never injects `process.env` through `define`. Step 7 adds a build check as a backstop.
 - The browser never calls the model provider directly.
 
 ### 3.2 Model access
@@ -312,3 +314,15 @@ Resolved at the start of Step 0:
 - When adding a dependency, add it to the Dependencies section of `README.md` under its layer.
 - Prefer small, reviewable changes and descriptive commit messages.
 - Mark anything that depends on current platform limits (Netlify or provider) as "verify" rather than assuming values.
+- When checking environment variables or secrets, print only presence, length or prefix, never values.
+
+---
+
+## 8. Development notes
+
+- **Commands:** `npm run dev` (Vite only), `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run format`. `netlify dev` serves the front end and functions together on `http://localhost:8888`, with variables from `.env`.
+- **Live site:** https://voluble-shortbread-33d0b9.netlify.app, deployed from `main`. It sits behind Netlify visitor access until Step 7.
+- **TypeScript** is pinned to `~6.0` because the `typescript-eslint` peer range stops below 6.1. Check that range before upgrading.
+- **`netlify dev:exec`** parses flags itself, so `netlify dev:exec node -p "…"` fails with "unknown option". Use a command without flags (e.g. `printenv NAME`) or run a script file.
+- **`deno.lock`** is written by `netlify dev` when it sets up the Edge Functions runtime. The project has no edge functions, and the file is git-ignored.
+- **Netlify CLI** is installed globally (`npm i -g netlify-cli`). npm skips its install scripts (esbuild, sharp, unix-dgram, netlify-cli postinstall), and the CLI works without them.
