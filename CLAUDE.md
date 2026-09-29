@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 0 (Setup) — in progress. Scaffold, tooling and core boundary are done; GitHub repo, provider account/spend cap and Netlify site are pending. Update this line as each step in §5 is completed.
+**Current status:** Step 0 (Setup) — complete. Next: Step 1 (Walking skeleton). Update this line as each step in §5 is completed.
 
 ---
 
@@ -57,6 +57,7 @@ Rules for the core:
 - The front end is a static site built with Vite and TypeScript, hosted on Netlify.
 - The back end is a single Netlify Function (TypeScript) at `/.netlify/functions/extract`. It works like a small Express endpoint: the browser posts the file to it, and the function calls the model.
 - The model API key is stored only as a Netlify environment variable. It is never sent to the browser or committed to the repo. Local development uses `.env`, which is git-ignored, via `netlify dev`.
+- The Anthropic key is named `CLAUDE_API_KEY`. `netlify dev` can inject its own `ANTHROPIC_API_KEY` and `ANTHROPIC_BASE_URL` (Netlify AI Gateway), which would replace a key with the standard name. The adapter passes `apiKey` and `baseURL` to the SDK explicitly, so calls always go straight to Anthropic on the project's own account and spend limit.
 - The browser never calls the model provider directly.
 
 ### 3.2 Model access
