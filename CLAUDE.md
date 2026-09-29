@@ -249,6 +249,7 @@ Each step ends in a working, deployable state. Deploying early matters more than
 
 **Step 1 — Walking skeleton**
 
+- Verify current Netlify limits before building: the synchronous function timeout, the request-body size limit, and the Node version functions run on. Record the values in §3.8.
 - Build an upload control, and a function that sends the file to the model and returns the raw response. Display the raw JSON.
 - Deploy. The live URL works end to end with an ugly UI.
 
@@ -276,6 +277,8 @@ Each step ends in a working, deployable state. Deploying early matters more than
 **Step 7 — Safeguards and error states**
 
 - Add size and type limits, rate limiting, the timeout, and user-facing messages for every failure mode. Confirm the spend cap is active.
+- Add a post-build check that fails the build if `sk-ant-` appears anywhere in `dist/`, so the API key can never ship in the front-end bundle.
+- The site stays behind Netlify visitor access (login) until these safeguards are in place. Once they are, switch visitor access off to make the demo public.
 
 **Step 8 — Polish and documentation**
 
