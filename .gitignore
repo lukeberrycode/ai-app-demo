@@ -1,2 +1,20 @@
+# Private and secret
 CLAUDE.local.md
 .env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules
+dist
+coverage
+.netlify
+
+# Logs
+*.log
+
+# Editor and OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
