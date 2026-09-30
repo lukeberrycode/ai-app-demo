@@ -68,6 +68,14 @@ The invoice preview uses the browser's built-in PDF and image viewers, so no ren
 - **Google Chrome** and **pdftoppm** (poppler-utils): not npm packages. `npm run samples` uses them to render the synthetic sample invoices from HTML to PDF and JPEG.
 - **@types/react**, **@types/react-dom** and **@types/node**: type definitions for React and Node.
 
+## Logs
+
+To read the serverless function's recent logs from the deployed site, use the Netlify CLI:
+
+```sh
+netlify logs --source functions --function extract --since 10m
+```
+
 ## Licence
 
 [MIT](LICENSE)
