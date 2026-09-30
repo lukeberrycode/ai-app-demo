@@ -1,6 +1,5 @@
-import { useState, type ChangeEvent } from "react";
-import type { Invoice, Issue } from "../core/invoice.ts";
-import { validateInvoice } from "../core/validation/index.ts";
+import { useEffect, useState, type ChangeEvent } from "react";
+import type { Invoice } from "../core/invoice.ts";
 import { toInvoice } from "../lib/toInvoice.ts";
 import { ExtractResponseSchema } from "../../shared/schema.ts";
 import {
@@ -8,32 +7,38 @@ import {
   MAX_UPLOAD_BYTES,
   isInvoiceMediaType,
 } from "../../shared/upload.ts";
+import { ReviewScreen, type UploadedFile } from "./ReviewScreen.tsx";
+import "./styles.css";
 
 type State =
   | { status: "idle" }
-  | { status: "loading"; fileName: string }
-  | {
-      status: "done";
-      fileName: string;
-      seconds: number;
-      invoice: Invoice;
-      issues: Issue[];
-    }
-  | { status: "error"; message: string; details?: string[] };
+  | { status: "loading"; file: UploadedFile }
+  | { status: "error"; message: string; details?: string[] }
+  | { status: "review"; file: UploadedFile; invoice: Invoice; today: string };
 
 export default function App() {
   const [state, setState] = useState<State>({ status: "idle" });
+  const fileUrl =
+    state.status === "loading" || state.status === "review"
+      ? state.file.url
+      : null;
+
+  // Release the preview's object URL when the file is no longer shown.
+  useEffect(() => {
+    if (!fileUrl) return;
+    return () => URL.revokeObjectURL(fileUrl);
+  }, [fileUrl]);
 
   async function handleFile(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+    const selected = event.target.files?.[0];
     event.target.value = ""; // allow re-selecting the same file
-    if (!file) return;
+    if (!selected) return;
 
-    if (!isInvoiceMediaType(file.type)) {
+    if (!isInvoiceMediaType(selected.type)) {
       setState({ status: "error", message: "Upload a PDF, JPEG or PNG file." });
       return;
     }
-    if (file.size > MAX_UPLOAD_BYTES) {
+    if (selected.size > MAX_UPLOAD_BYTES) {
       setState({
         status: "error",
         message: `The file is too large (limit ${MAX_UPLOAD_BYTES / 1024 / 1024} MB).`,
@@ -41,13 +46,17 @@ export default function App() {
       return;
     }
 
-    setState({ status: "loading", fileName: file.name });
-    const started = performance.now();
+    const file: UploadedFile = {
+      name: selected.name,
+      mediaType: selected.type,
+      url: URL.createObjectURL(selected),
+    };
+    setState({ status: "loading", file });
     try {
       const response = await fetch("/.netlify/functions/extract", {
         method: "POST",
-        headers: { "content-type": file.type },
-        body: file,
+        headers: { "content-type": selected.type },
+        body: selected,
       });
       const body: unknown = await response.json().catch(() => null);
       if (!response.ok) {
@@ -63,13 +72,11 @@ export default function App() {
         });
         return;
       }
-      const invoice = toInvoice(parsed.data.invoice);
       setState({
-        status: "done",
-        fileName: file.name,
-        seconds: (performance.now() - started) / 1000,
-        invoice,
-        issues: validateInvoice(invoice, { today: localIsoDate() }),
+        status: "review",
+        file,
+        invoice: toInvoice(parsed.data.invoice),
+        today: localIsoDate(),
       });
     } catch {
       setState({ status: "error", message: "Could not reach the server." });
@@ -77,17 +84,31 @@ export default function App() {
   }
 
   return (
-    <main>
-      <h1>Dealership Invoice Extractor</h1>
-      <input
-        type="file"
-        accept={INVOICE_MEDIA_TYPES.join(",")}
-        onChange={handleFile}
-        disabled={state.status === "loading"}
-      />
-      {state.status === "loading" && <p>Extracting {state.fileName}…</p>}
+    <div className="app">
+      <header className="app-header">
+        <h1>Dealership Invoice Extractor</h1>
+        {state.status !== "review" && (
+          <label className="upload">
+            <span>Upload an invoice (PDF, JPEG or PNG, up to 4 MB)</span>
+            <input
+              type="file"
+              accept={INVOICE_MEDIA_TYPES.join(",")}
+              onChange={handleFile}
+              disabled={state.status === "loading"}
+            />
+          </label>
+        )}
+      </header>
+
+      {state.status === "loading" && (
+        <p className="loading" role="status">
+          <span className="spinner" aria-hidden="true" />
+          Reading {state.file.name}… this usually takes 5–10 seconds.
+        </p>
+      )}
+
       {state.status === "error" && (
-        <div role="alert">
+        <div className="error-box" role="alert">
           <p>{state.message}</p>
           {state.details && (
             <ul>
@@ -98,17 +119,17 @@ export default function App() {
           )}
         </div>
       )}
-      {state.status === "done" && (
-        <>
-          <p>
-            {state.fileName} — {state.seconds.toFixed(1)} s
-          </p>
-          <IssueList issues={state.issues} />
-          <p>Parsed invoice (money in pence):</p>
-          <pre>{JSON.stringify(state.invoice, null, 2)}</pre>
-        </>
+
+      {state.status === "review" && (
+        <ReviewScreen
+          key={state.file.url}
+          file={state.file}
+          extracted={state.invoice}
+          today={state.today}
+          onStartAgain={() => setState({ status: "idle" })}
+        />
       )}
-    </main>
+    </div>
   );
 }
 
@@ -124,28 +145,6 @@ function errorFrom(
     return { message: String(body.error), details };
   }
   return { message: `Request failed (${status}).` };
-}
-
-function IssueList({ issues }: { issues: Issue[] }) {
-  if (issues.length === 0) return <p>No issues found.</p>;
-  const errors = issues.filter((issue) => issue.severity === "error").length;
-  const warnings = issues.length - errors;
-  return (
-    <>
-      <p>
-        {errors} error{errors === 1 ? "" : "s"}, {warnings} warning
-        {warnings === 1 ? "" : "s"}:
-      </p>
-      <ul>
-        {issues.map((issue) => (
-          <li key={`${issue.ruleId}:${issue.field}`}>
-            <strong>{issue.severity.toUpperCase()}</strong> {issue.field}:{" "}
-            {issue.message}
-          </li>
-        ))}
-      </ul>
-    </>
-  );
 }
 
 /** Today's date in the browser's time zone, as YYYY-MM-DD. */
