@@ -1,3 +1,4 @@
+import { fieldLabel } from "../lib/fieldLabels.ts";
 import { formatPence } from "../lib/money.ts";
 import type { AuditEntry, AuditValue } from "../lib/audit.ts";
 
@@ -28,13 +29,13 @@ function describe(entry: AuditEntry): string {
     case "edited":
       if (/^lineItems\[\d+\]$/.test(entry.field ?? "")) {
         return entry.before === null
-          ? `Added ${entry.field}.`
-          : `Removed ${entry.field}.`;
+          ? `Added ${fieldLabel(entry.field!)}.`
+          : `Removed ${fieldLabel(entry.field!)}.`;
       }
-      return `${entry.field}: ${show(entry.field, entry.before)} → ${show(entry.field, entry.after)}`;
+      return `${fieldLabel(entry.field!)}: ${show(entry.field, entry.before)} → ${show(entry.field, entry.after)}`;
     case "overridden":
     case "override_removed":
-      return `${entry.field} (${entry.ruleId}): “${entry.reason}”`;
+      return `${fieldLabel(entry.field!)}: “${entry.reason}”`;
     case "approved":
       return "Invoice approved.";
     case "rejected":

@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+import { fieldLabel } from "../lib/fieldLabels.ts";
 import { issueKey, type ReviewSummary } from "../lib/review.ts";
 import { fieldId } from "./fieldHelpers.ts";
 
@@ -17,18 +19,31 @@ export function IssuesPanel({
 }) {
   const { issues, errors, warnings, unresolved } = summary;
   const overridden = errors.length - unresolved.length;
+  const plural = (n: number, word: string) =>
+    `${n} ${word}${n === 1 ? "" : "s"}`;
+  const counts: [text: string, tone: string][] = [
+    [
+      plural(unresolved.length, "unresolved error"),
+      unresolved.length ? "error" : "muted",
+    ],
+    ...(overridden > 0
+      ? [[`${overridden} overridden`, "overridden"] as [string, string]]
+      : []),
+    [plural(warnings.length, "warning"), warnings.length ? "warning" : "muted"],
+  ];
   return (
     <section className="issues-panel" aria-labelledby="issues-heading">
       <h2 id="issues-heading">
-        {issues.length === 0
-          ? "No issues found"
-          : [
-              `${unresolved.length} unresolved error${unresolved.length === 1 ? "" : "s"}`,
-              overridden > 0 ? `${overridden} overridden` : null,
-              `${warnings.length} warning${warnings.length === 1 ? "" : "s"}`,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
+        {issues.length === 0 ? (
+          <span className="count ok">No issues found</span>
+        ) : (
+          counts.map(([text, tone], i) => (
+            <Fragment key={text}>
+              {i > 0 && " · "}
+              <span className={`count ${tone}`}>{text}</span>
+            </Fragment>
+          ))
+        )}
       </h2>
       {issues.length > 0 && (
         <ul>
@@ -48,7 +63,7 @@ export function IssuesPanel({
                   className="link"
                   onClick={() => focusField(issue.field)}
                 >
-                  {issue.field}
+                  {fieldLabel(issue.field)}
                 </button>
                 <span className={isOverridden ? "struck" : undefined}>
                   {issue.message}
