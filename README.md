@@ -15,6 +15,8 @@ The model does the reading. Everything that decides whether the data can be trus
 5. Anything that fails appears as an exception in the review screen. You correct it, override it with a written reason, or reject the invoice.
 6. Every step is recorded in the audit trail, alongside the raw model output.
 
+Step-by-step guidance for reviewers, as if/then journeys, is in [docs/user-journeys.md](docs/user-journeys.md).
+
 ## Architecture
 
 The code is arranged in layers, like an onion. Dependencies only point inward.
