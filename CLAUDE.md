@@ -295,7 +295,7 @@ Each step ends in a working, deployable state. Deploying early matters more than
 **Step 7 — Safeguards and error states**
 
 - Add size and type limits, rate limiting, the timeout, and user-facing messages for every failure mode. Confirm the spend cap is active.
-- Add a post-build check that fails the build if `sk-ant-` appears anywhere in `dist/`, so the API key can never ship in the front-end bundle.
+- Add a post-build check that fails the build if `sk-ant-` appears anywhere in `dist/`, so the API key can never ship in the front-end bundle. **Done:** `scripts/check-dist.ts`, run by `npm run build`; it also checks for the exact `CLAUDE_API_KEY` value when that is set, as in Netlify builds.
 - The site stays behind Netlify visitor access (login) until these safeguards are in place. Once they are, switch visitor access off to make the demo public.
 
 **Step 8 — Polish and documentation**
@@ -336,7 +336,7 @@ Resolved at the start of Step 0:
 
 ## 8. Development notes
 
-- **Commands:** `npm run dev` (Vite only), `npm run lint`, `npm run typecheck`, `npm test`, `npm run test:coverage` (fails below 100% on `src/core/`), `npm run build`, `npm run format`. `netlify dev` serves the front end and functions together on `http://localhost:8888`, with variables from `.env`.
+- **Commands:** `npm run dev` (Vite only), `npm run lint`, `npm run typecheck`, `npm test`, `npm run test:coverage` (fails below 100% on `src/core/`), `npm run build` (ends with `npm run check:dist`, which fails if an API key appears in `dist/`), `npm run format`. `netlify dev` serves the front end and functions together on `http://localhost:8888`, with variables from `.env`.
 - **Live site:** https://voluble-shortbread-33d0b9.netlify.app, deployed from `main`. It sits behind Netlify visitor access until Step 7.
 - **TypeScript** is pinned to `~6.0` because the `typescript-eslint` peer range stops below 6.1. Check that range before upgrading.
 - **`netlify dev:exec`** parses flags itself, so `netlify dev:exec node -p "…"` fails with "unknown option". Use a command without flags (e.g. `printenv NAME`) or run a script file.
