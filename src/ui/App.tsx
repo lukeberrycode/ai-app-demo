@@ -1,4 +1,7 @@
 import { useState, type ChangeEvent } from "react";
+import type { Invoice } from "../core/invoice.ts";
+import { toInvoice } from "../lib/toInvoice.ts";
+import { ExtractResponseSchema } from "../../shared/schema.ts";
 import {
   INVOICE_MEDIA_TYPES,
   MAX_UPLOAD_BYTES,
@@ -8,8 +11,8 @@ import {
 type State =
   | { status: "idle" }
   | { status: "loading"; fileName: string }
-  | { status: "done"; fileName: string; seconds: number; body: unknown }
-  | { status: "error"; message: string };
+  | { status: "done"; fileName: string; seconds: number; invoice: Invoice }
+  | { status: "error"; message: string; details?: string[] };
 
 export default function App() {
   const [state, setState] = useState<State>({ status: "idle" });
@@ -41,18 +44,23 @@ export default function App() {
       });
       const body: unknown = await response.json().catch(() => null);
       if (!response.ok) {
-        const message =
-          body && typeof body === "object" && "error" in body
-            ? String(body.error)
-            : `Request failed (${response.status}).`;
-        setState({ status: "error", message });
+        setState({ status: "error", ...errorFrom(body, response.status) });
+        return;
+      }
+      // The response crosses the network, so it is parsed again here.
+      const parsed = ExtractResponseSchema.safeParse(body);
+      if (!parsed.success) {
+        setState({
+          status: "error",
+          message: "The server's response did not match the invoice schema.",
+        });
         return;
       }
       setState({
         status: "done",
         fileName: file.name,
         seconds: (performance.now() - started) / 1000,
-        body,
+        invoice: toInvoice(parsed.data.invoice),
       });
     } catch {
       setState({ status: "error", message: "Could not reach the server." });
@@ -69,15 +77,41 @@ export default function App() {
         disabled={state.status === "loading"}
       />
       {state.status === "loading" && <p>Extracting {state.fileName}…</p>}
-      {state.status === "error" && <p role="alert">{state.message}</p>}
+      {state.status === "error" && (
+        <div role="alert">
+          <p>{state.message}</p>
+          {state.details && (
+            <ul>
+              {state.details.map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       {state.status === "done" && (
         <>
           <p>
             {state.fileName} — {state.seconds.toFixed(1)} s
           </p>
-          <pre>{JSON.stringify(state.body, null, 2)}</pre>
+          <p>Parsed invoice (money in pence):</p>
+          <pre>{JSON.stringify(state.invoice, null, 2)}</pre>
         </>
       )}
     </main>
   );
+}
+
+function errorFrom(
+  body: unknown,
+  status: number,
+): { message: string; details?: string[] } {
+  if (body && typeof body === "object" && "error" in body) {
+    const details =
+      "issues" in body && Array.isArray(body.issues)
+        ? body.issues.map(String)
+        : undefined;
+    return { message: String(body.error), details };
+  }
+  return { message: `Request failed (${status}).` };
 }
