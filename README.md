@@ -65,6 +65,7 @@ The invoice preview uses the browser's built-in PDF and image viewers, so no ren
 - **ESLint**, with **@eslint/js**, **typescript-eslint**, **eslint-plugin-react-hooks**, **eslint-plugin-react-refresh** and **globals**: finds likely bugs and enforces the layer boundaries. `src/core/` may import only from inside itself, and cannot touch the DOM, network, storage, environment or clock.
 - **eslint-config-prettier**: switches off ESLint rules that would clash with Prettier.
 - **Prettier**: automatic code formatting.
+- **Google Chrome** and **pdftoppm** (poppler-utils): not npm packages. `npm run samples` uses them to render the synthetic sample invoices from HTML to PDF and JPEG.
 - **@types/react**, **@types/react-dom** and **@types/node**: type definitions for React and Node.
 
 ## Licence

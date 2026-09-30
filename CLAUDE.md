@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 1 (Walking skeleton) — in progress. Works end to end under `netlify dev`; live deploy check pending. Update this line as each step in §5 is completed.
+**Current status:** Step 1 (Walking skeleton) — in progress. Works end to end under `netlify dev`; live deploy check pending. The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
 
 ---
 
@@ -325,5 +325,6 @@ Resolved at the start of Step 0:
 - **Live site:** https://voluble-shortbread-33d0b9.netlify.app, deployed from `main`. It sits behind Netlify visitor access until Step 7.
 - **TypeScript** is pinned to `~6.0` because the `typescript-eslint` peer range stops below 6.1. Check that range before upgrading.
 - **`netlify dev:exec`** parses flags itself, so `netlify dev:exec node -p "…"` fails with "unknown option". Use a command without flags (e.g. `printenv NAME`) or run a script file.
+- **Sample invoices:** `npm run samples` regenerates `samples/` (PDFs, one JPEG, `expected/*.json`, `README.md`) from `scripts/samples/data.ts`. It needs Google Chrome (headless, override with `CHROME=`), `pdftoppm` (poppler-utils) and the Ubuntu Mono font, whose dotted zero keeps a letter O in a VIN visible. The script asserts that every amount is whole pence and that the VINs are valid or invalid as intended. The output is committed; edit the data, not the output. `samples/` is excluded from Prettier.
 - **`deno.lock`** is written by `netlify dev` when it sets up the Edge Functions runtime. The project has no edge functions, and the file is git-ignored.
 - **Netlify CLI** is installed globally (`npm i -g netlify-cli`). npm skips its install scripts (esbuild, sharp, unix-dgram, netlify-cli postinstall), and the CLI works without them.
