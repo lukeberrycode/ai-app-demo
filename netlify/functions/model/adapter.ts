@@ -10,19 +10,7 @@ export interface ModelAdapter {
   extractInvoice(input: InvoiceFile): Promise<unknown>; // raw model output, parsed later
 }
 
-// Provider-neutral failure, so the HTTP handler never sees provider SDK errors.
-export type ModelErrorKind =
-  "timeout" | "rate_limit" | "refused" | "incomplete" | "upstream";
-
-export class ModelError extends Error {
-  readonly kind: ModelErrorKind;
-
-  constructor(kind: ModelErrorKind, message: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ModelError";
-    this.kind = kind;
-  }
-}
+export { ModelError, type ModelErrorKind } from "./errors.ts";
 
 export interface ModelConfig {
   MODEL_PROVIDER?: string;

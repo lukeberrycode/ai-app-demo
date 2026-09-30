@@ -1,7 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { WireInvoiceSchema } from "../../../shared/schema.ts";
-import { ModelError, type InvoiceFile, type ModelAdapter } from "./adapter.ts";
+import type { InvoiceFile, ModelAdapter } from "./adapter.ts";
+import { toModelError } from "./anthropicErrors.ts";
+import { ModelError } from "./errors.ts";
 import { EXTRACTION_PROMPT } from "./prompt.ts";
 
 // Set explicitly: netlify dev injects ANTHROPIC_BASE_URL (Netlify AI Gateway),
@@ -111,25 +113,4 @@ export function createAnthropicAdapter(options: {
       }
     },
   };
-}
-
-function toModelError(error: unknown): ModelError {
-  if (error instanceof Anthropic.APIConnectionTimeoutError) {
-    return new ModelError("timeout", "The model took too long to respond.", {
-      cause: error,
-    });
-  }
-  if (error instanceof Anthropic.RateLimitError) {
-    return new ModelError("rate_limit", "The model is rate limited.", {
-      cause: error,
-    });
-  }
-  if (error instanceof Anthropic.APIError) {
-    return new ModelError(
-      "upstream",
-      `Model request failed (${error.status ?? "no status"}).`,
-      { cause: error },
-    );
-  }
-  return new ModelError("upstream", "Model request failed.", { cause: error });
 }
