@@ -4,7 +4,18 @@ A small web app that reads UK motor-trade supplier invoices (PDF, JPEG or PNG) w
 
 The model does the reading. Everything that decides whether the data can be trusted is ordinary, tested code.
 
-> **Status:** in early development. A live demo link and a "Try this" walkthrough will be added here.
+**Live demo:** https://luke-berry-ai-app-demo.netlify.app
+
+## Try this
+
+The app offers six synthetic sample invoices, so you need nothing of your own. This takes under a minute:
+
+1. **Tyres and exhaust.** Click the sample. The issues list shows two errors: the line items add up to £312.40, but the printed net total is £321.40, so the gross total no longer adds up either. The invoice on the left shows the same mistake, so the supplier made it, not the model. Suppose the supplier confirms the line items are right: type `312.40` into **Net total**, and both errors clear as you type. Click **Approve**.
+2. **Look at the audit trail** below the form. It records the extraction, your change (£321.40 → £312.40) and the approval. Click **Export JSON** to download it, together with the model's raw answer.
+3. **Car service.** The VIN contains the letter O, which a VIN never does. The model copied it exactly as printed, and a rule flagged it. Click **Override…**, give a reason, and approve.
+4. **Used car purchase.** A margin-scheme invoice with no VAT. This is normal for used vehicles, so it is a warning rather than an error, and approval is not blocked.
+
+Open **Help** at any point for the full user guide.
 
 ## How it works
 
@@ -16,6 +27,19 @@ The model does the reading. Everything that decides whether the data can be trus
 6. Every step is recorded in the audit trail, alongside the raw model output.
 
 The [user guide](docs/user-guide.md) explains how to review an invoice. The app shows the same guide under **Help**.
+
+## Design decisions
+
+- **The model reads; code decides.** The model's only job is to turn a document into structured data. Whether that data can be trusted is decided by deterministic validation rules: plain functions with full test coverage that give the same answer every time and can be read, reviewed and audited. The model's own confidence is not used. This keeps the part that makes decisions predictable, and makes every exception explainable.
+- **A person makes the final decision.** Errors block approval until they are corrected or overridden with a written reason. Warnings inform without blocking. Every action is recorded, with values before and after, next to the model's raw output, so the approved data can always be traced back to what was read.
+- **Copy, don't correct.** The model is told to copy values exactly as printed, even when they look wrong. A supplier's arithmetic mistake or an impossible VIN then reaches the rules and the reviewer, instead of being silently "fixed" by the model. The sample invoices include both cases to show this.
+- **UK motor-trade rules.** Used vehicles are often sold under the VAT margin scheme, where no VAT is shown and none can be reclaimed. A generic "VAT must be 20% of net" rule would flag every such invoice as an error. Here, margin-scheme invoices raise a warning instead, and the other checks are UK-specific too: VIN format (without the North American check digit), current and older registration formats, and GB VAT number formats.
+- **Money is integer pence.** The model reports amounts in pounds, as printed. They are converted to integer pence once, at the boundary, so every total and ±1p tolerance check is exact integer arithmetic.
+- **Model output is untrusted input.** The model returns JSON constrained by a schema, and the same zod schema checks it again on arrival, in the serverless function and in the browser. Output that does not match becomes a clear error, never a crash. The structured-output schema is generated from the zod schema, so they cannot drift apart.
+- **The API key stays on the server.** The browser talks only to the serverless function, which holds the key as an environment variable. A build check fails the deploy if a key ever appears in the front-end bundle. The adapter also sets the key and API address explicitly, because `netlify dev` can inject its own `ANTHROPIC_*` variables for Netlify's AI Gateway; calls always go to Anthropic on this project's account and spend limit.
+- **Provider behind an adapter.** All model calls go through one small interface, selected by `MODEL_PROVIDER`. The current implementation uses Anthropic's Claude (`claude-sonnet-5-5` by default, at low effort, because reading an invoice needs little reasoning), which reads PDFs and images directly.
+- **Safeguards for a public URL.** Uploads are limited to 4 MB and three file types, checked in both the browser and the function. The function is rate-limited to 10 requests per 3 minutes per visitor, the model call times out before Netlify's 60-second limit, and the provider account has a hard spend limit. Every failure has a plain-English message and, where it helps, a **Try again** button.
+- **No database.** Each file is processed and discarded. Review history is kept in the browser's local storage, which suits a demo; a production system would store records server-side.
 
 ## Architecture
 
@@ -40,7 +64,7 @@ The code is arranged in layers, like an onion. Dependencies only point inward.
 
 ## Dependencies
 
-The versions in `package.json` are the source of truth. The entries below explain what each dependency is and why it is used here. Items marked _planned_ are not installed yet.
+The versions in `package.json` are the source of truth. The entries below explain what each dependency is and why it is used here.
 
 ### Core
 
@@ -73,6 +97,36 @@ The invoice preview uses the browser's built-in PDF and image viewers, so no ren
 - **Google Chrome** and **pdftoppm** (poppler-utils): not npm packages. `npm run samples` uses them to render the synthetic sample invoices from HTML to PDF and JPEG.
 - **@types/react**, **@types/react-dom** and **@types/node**: type definitions for React and Node.
 - **@netlify/functions**: type definitions for the function's `config` export, which sets its path and rate limit.
+
+## Run it locally
+
+You need Node.js 24 (see `.nvmrc`), the [Netlify CLI](https://docs.netlify.com/cli/get-started/) (`npm install -g netlify-cli`) and an [Anthropic API key](https://console.anthropic.com/).
+
+```sh
+git clone https://github.com/lukeberrycode/ai-app-demo.git
+cd ai-app-demo
+npm install
+cp .env.example .env    # then set CLAUDE_API_KEY in .env
+netlify dev             # front end and function on http://localhost:8888
+```
+
+`npm run dev` starts the front end alone, without the function.
+
+To deploy your own copy, create a Netlify site from the repository (the build settings are in `netlify.toml`) and set `CLAUDE_API_KEY` and `MODEL_PROVIDER=anthropic` as environment variables.
+
+## Testing
+
+| Command                 | What it does                                                                                                                                               |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm test`              | Unit tests: validation rules, money, schema, mapping, review, audit trail, error handling.                                                                 |
+| `npm run test:coverage` | The same, with coverage; fails if anything in `src/core/` drops below 100%.                                                                                |
+| `npm run lint`          | ESLint, including the rule that keeps `src/core/` free of outside imports.                                                                                 |
+| `npm run typecheck`     | TypeScript in strict mode.                                                                                                                                 |
+| `npm run build`         | Production build, followed by the check that no API key is in the bundle.                                                                                  |
+| `npm run eval`          | Sends every sample invoice to the model and reports field-level accuracy against the ground truth in `samples/expected/` (uses the API; about 6p per run). |
+| `npm run samples`       | Regenerates the sample invoices and ground truth from `scripts/samples/data.ts`.                                                                           |
+
+The sample invoices and what each one tests are described in [samples/README.md](samples/README.md).
 
 ## Logs
 
