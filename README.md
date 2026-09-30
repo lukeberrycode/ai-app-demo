@@ -46,7 +46,7 @@ None, by design.
 
 ### Tooling layer
 
-- **zod** _(planned)_: a TypeScript library for describing the shape of data and checking real data against it at runtime. TypeScript types only exist while the code compiles. They cannot check JSON that arrives from outside while the app is running. zod fills that gap. You write a schema once, and `schema.safeParse(data)` returns either correctly typed data or a list of exactly what was wrong. `z.infer` produces the matching TypeScript type from the same schema. Here, zod checks the model's JSON output, which is treated as untrusted. A response that does not match the schema becomes a clear error state instead of a crash further on.
+- **zod**: a TypeScript library for describing the shape of data and checking real data against it at runtime. TypeScript types only exist while the code compiles. They cannot check JSON that arrives from outside while the app is running. zod fills that gap. You write a schema once, and `schema.safeParse(data)` returns either correctly typed data or a list of exactly what was wrong. `z.infer` produces the matching TypeScript type from the same schema. Here, zod checks the model's JSON output, which is treated as untrusted. A response that does not match the schema becomes a clear error state instead of a crash further on.
 - **`money.ts`** (in this repo, not a package): helpers that convert between decimal pounds and integer pence, and format pence for display. Integer pence avoid floating-point errors such as `0.1 + 0.2 !== 0.3`, so totals can be compared exactly.
 
 ### Outer layer
