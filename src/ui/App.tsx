@@ -14,6 +14,12 @@ import {
   isInvoiceMediaType,
 } from "../../shared/upload.ts";
 import type { AuditRecord } from "../lib/audit.ts";
+import {
+  NETWORK_FAILURE,
+  TIMEOUT_FAILURE,
+  failureFromResponse,
+  type Failure,
+} from "../lib/extractFailure.ts";
 import { HelpPanel } from "./HelpPanel.tsx";
 import { History } from "./History.tsx";
 import { ReviewScreen, type UploadedFile } from "./ReviewScreen.tsx";
@@ -22,10 +28,12 @@ import { MEDIA_TYPES, sampleUrls } from "./samples.ts";
 import { clearRecords, loadRecords } from "./storage.ts";
 import "./styles.css";
 
+const EXTRACT_TIMEOUT_MS = 70_000;
+
 type State =
   | { status: "idle" }
   | { status: "loading"; file: UploadedFile }
-  | { status: "error"; message: string; details?: string[] }
+  | ({ status: "error"; retry?: File } & Failure)
   | {
       status: "review";
       invoiceId: string;
@@ -97,14 +105,20 @@ export default function App() {
     };
     setState({ status: "loading", file });
     try {
-      const response = await fetch("/.netlify/functions/extract", {
+      const response = await fetch("/api/extract", {
         method: "POST",
         headers: { "content-type": selected.type },
         body: selected,
+        // Longer than the function's own 60 s limit, so its error arrives first.
+        signal: AbortSignal.timeout(EXTRACT_TIMEOUT_MS),
       });
       const body: unknown = await response.json().catch(() => null);
       if (!response.ok) {
-        setState({ status: "error", ...errorFrom(body, response.status) });
+        setState({
+          status: "error",
+          retry: selected,
+          ...failureFromResponse(response.status, body),
+        });
         return;
       }
       // The response crosses the network, so it is parsed again here.
@@ -125,8 +139,12 @@ export default function App() {
         extractedAt: new Date().toISOString(),
         today: localIsoDate(),
       });
-    } catch {
-      setState({ status: "error", message: "Could not reach the server." });
+    } catch (error) {
+      const failure =
+        error instanceof DOMException && error.name === "TimeoutError"
+          ? TIMEOUT_FAILURE
+          : NETWORK_FAILURE;
+      setState({ status: "error", retry: selected, ...failure });
     }
   }
 
@@ -173,6 +191,14 @@ export default function App() {
                 <li key={detail}>{detail}</li>
               ))}
             </ul>
+          )}
+          {state.retry && (
+            <button
+              type="button"
+              onClick={() => state.retry && void extract(state.retry)}
+            >
+              Try again with {state.retry.name}
+            </button>
           )}
         </div>
       )}
@@ -222,20 +248,6 @@ export default function App() {
       <HelpPanel open={helpOpen} onClose={closeHelp} />
     </div>
   );
-}
-
-function errorFrom(
-  body: unknown,
-  status: number,
-): { message: string; details?: string[] } {
-  if (body && typeof body === "object" && "error" in body) {
-    const details =
-      "issues" in body && Array.isArray(body.issues)
-        ? body.issues.map(String)
-        : undefined;
-    return { message: String(body.error), details };
-  }
-  return { message: `Request failed (${status}).` };
 }
 
 /** Today's date in the browser's time zone, as YYYY-MM-DD. */
