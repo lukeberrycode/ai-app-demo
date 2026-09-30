@@ -11,7 +11,8 @@ export interface ModelAdapter {
 }
 
 // Provider-neutral failure, so the HTTP handler never sees provider SDK errors.
-export type ModelErrorKind = "timeout" | "rate_limit" | "upstream";
+export type ModelErrorKind =
+  "timeout" | "rate_limit" | "refused" | "incomplete" | "upstream";
 
 export class ModelError extends Error {
   readonly kind: ModelErrorKind;
