@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 1 (Walking skeleton) — in progress. Works end to end under `netlify dev`; live deploy check pending. The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
+**Current status:** Step 1 (Walking skeleton) — complete; the live URL extracts invoices end to end. Next: Step 2 (Schema and structured output). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
 
 ---
 
