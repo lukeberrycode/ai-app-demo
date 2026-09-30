@@ -152,7 +152,7 @@ How the rules read the table (implemented in `src/core/validation/`, one file pe
 
 ### 3.5 Review UI
 
-The reviewer's journeys, written as if/then steps, are in `docs/user-journeys.md`, along with the known gaps in guidance. Keep that file in step with the UI.
+The reviewer's journeys, written as if/then steps, are in `docs/user-journeys.md`. The app renders that file as its Help guide, so keep it in step with the UI and written for reviewers. Known gaps in guidance are tracked in `docs/ux-gaps.md`.
 
 - The layout is split: the invoice preview is on the left, and the extracted fields form is on the right.
 - Fields with issues are highlighted by severity, and the issue message is shown next to the field.
