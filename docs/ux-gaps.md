@@ -9,4 +9,4 @@ Engineering notes on the review UI. The reviewer-facing documentation is [user-g
 5. **Edited fields are not marked.** The form does not show which values the reviewer changed from what the model extracted; only the audit trail does.
 6. **Leaving mid-review loses the review.** The record is saved as "reviewing", but it cannot be resumed, and the app does not warn before you leave the page.
 7. **No "Try again" after a failed upload.** The reviewer has to choose the same file again.
-8. **No first-visit introduction.** The upload screen does not explain what the app does, and there is no sample to try (Step 6 adds a sample picker).
+8. ~~**No first-visit introduction.**~~ Resolved in Step 6: the upload screen explains the app in two sentences and offers six sample invoices.

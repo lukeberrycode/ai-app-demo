@@ -20,7 +20,7 @@ The AI model only reads the invoice. It does not decide whether the data is righ
 
 ## What you need
 
-- An invoice as a **PDF, JPEG or PNG** file, no larger than **4 MB**.
+- An invoice as a **PDF, JPEG or PNG** file, no larger than **4 MB**. If you do not have one, use one of the sample invoices on the upload screen (see "Try a sample invoice").
 - About a minute per invoice. Reading takes 5–10 seconds; checking takes as long as the invoice needs.
 
 ## The review screen
@@ -48,7 +48,7 @@ Open **Help** at any time to see this guide. It opens in front of the app and re
 
 ### 1. Upload the invoice
 
-Choose the file with **Upload an invoice**. The app shows "Reading…" while the AI model reads it, then opens the review screen.
+Choose the file with **Upload an invoice**, or click one of the sample invoices. The app shows "Reading…" while the AI model reads it, then opens the review screen.
 
 ### 2. Compare the form with the invoice
 
@@ -95,6 +95,19 @@ If you change your mind, click **Undo** next to the reason. The error becomes un
 Approving or rejecting is final. The form becomes read-only and the bar shows **Approved** or **Rejected**. To look at the same invoice again, upload it again.
 
 When you have finished, download the record if you need it (see "Your records"), then click **Review another invoice**.
+
+## Try a sample invoice
+
+The upload screen offers six sample invoices, made up for this demo. Each one is read by the AI model just like an upload, and each shows a different part of the review:
+
+| Sample               | What you will see                                                                                          |
+| -------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Parts invoice        | Everything checks out. Compare the fields, then approve.                                                   |
+| Bodyshop repair      | Nine lines, one of them at 0% VAT. Everything checks out.                                                  |
+| Tyres and exhaust    | The supplier's net total is wrong, which causes two errors. Decide whether to reject, correct or override. |
+| Car service          | The VIN contains the letter O, which a VIN never does: one error.                                          |
+| Used car purchase    | A margin-scheme invoice with no VAT shown: one warning.                                                    |
+| Photographed invoice | A phone photo of an invoice with an older-style registration: one warning.                                 |
 
 ## Editing the form
 

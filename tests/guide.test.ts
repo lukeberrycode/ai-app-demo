@@ -11,6 +11,7 @@ describe("in-app user guide", () => {
       "The review screen",
       "Errors and warnings",
       "How to review an invoice",
+      "Try a sample invoice",
       "Editing the form",
       "Why Approve is unavailable",
       "The checks",

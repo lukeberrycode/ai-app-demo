@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 5 (Audit trail) — complete locally. Live check pending. Next: Step 6 (the remaining in-app sample picker and optional `eval.ts`; the samples themselves exist). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
+**Current status:** Step 6 (Sample invoices and ground truth) — complete locally: sample picker and `npm run eval` (264/264 fields exact on 2026-09-30). Live check pending. Next: Step 7 (Safeguards and error states). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
 
 ---
 
@@ -343,7 +343,7 @@ Resolved at the start of Step 0:
 
 ## 8. Development notes
 
-- **Commands:** `npm run dev` (Vite only), `npm run lint`, `npm run typecheck`, `npm test`, `npm run test:coverage` (fails below 100% on `src/core/`), `npm run build` (ends with `npm run check:dist`, which fails if an API key appears in `dist/`), `npm run format`. `netlify dev` serves the front end and functions together on `http://localhost:8888`, with variables from `.env`.
+- **Commands:** `npm run dev` (Vite only), `npm run lint`, `npm run typecheck`, `npm test`, `npm run test:coverage` (fails below 100% on `src/core/`), `npm run build` (ends with `npm run check:dist`, which fails if an API key appears in `dist/`), `npm run eval` (runs every sample through the real extraction and reports field accuracy and issues; reads `.env`, about 6p per run), `npm run format`. `netlify dev` serves the front end and functions together on `http://localhost:8888`, with variables from `.env`.
 - **Live site:** https://luke-berry-ai-app-demo.netlify.app (renamed from `voluble-shortbread-33d0b9`), deployed from `main`. Public: visitor access was switched off on 2026-09-30, once the key-leak build check was in place and before rate limiting. Until rate limiting lands, the prepaid credit (no auto-reload) and the monthly spend limit cap the cost of misuse.
 - **TypeScript** is pinned to `~6.0` because the `typescript-eslint` peer range stops below 6.1. Check that range before upgrading.
 - **`netlify dev:exec`** parses flags itself, so `netlify dev:exec node -p "…"` fails with "unknown option". Use a command without flags (e.g. `printenv NAME`) or run a script file.
