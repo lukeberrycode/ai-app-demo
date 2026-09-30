@@ -1,5 +1,7 @@
 import type { Pence } from "../core/invoice.ts";
 
+export { formatPence } from "../core/money.ts";
+
 /**
  * Converts decimal pounds to integer pence. Throws if the amount is not a
  * whole number of pence, so a sub-penny value is never silently rounded.
@@ -10,14 +12,6 @@ export function poundsToPence(pounds: number): Pence {
     throw new RangeError(`Not a whole number of pence: ${pounds}`);
   }
   return pence === 0 ? 0 : pence; // normalise -0
-}
-
-/** Formats pence for display, e.g. 123456 → "£1,234.56". */
-export function formatPence(pence: Pence): string {
-  const sign = pence < 0 ? "-" : "";
-  const abs = Math.abs(pence);
-  const pounds = Math.floor(abs / 100).toLocaleString("en-GB");
-  return `${sign}£${pounds}.${String(abs % 100).padStart(2, "0")}`;
 }
 
 /**
