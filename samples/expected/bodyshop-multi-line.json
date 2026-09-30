@@ -1,0 +1,98 @@
+{
+  "supplier": {
+    "name": "Castle Accident Repair Centre",
+    "address": "2 Priory Works, Mill Street, Warwick, CV34 4HB",
+    "vatNumber": "GB 987 6543 21"
+  },
+  "invoiceNumber": "CRC/2026/0917",
+  "invoiceDate": "2026-09-17",
+  "dueDate": "2026-10-01",
+  "currency": "GBP",
+  "vatScheme": "standard",
+  "vehicle": {
+    "registration": "KX19 LMR",
+    "vin": "WVWZZZAUZKW123456",
+    "make": "Volkswagen",
+    "model": "Golf"
+  },
+  "lineItems": [
+    {
+      "description": "Front bumper cover, primed",
+      "quantity": 1,
+      "unitPrice": 214.5,
+      "net": 214.5,
+      "vatRate": 20,
+      "vat": 42.9
+    },
+    {
+      "description": "Lower grille",
+      "quantity": 1,
+      "unitPrice": 64.8,
+      "net": 64.8,
+      "vatRate": 20,
+      "vat": 12.96
+    },
+    {
+      "description": "Headlamp unit, nearside",
+      "quantity": 1,
+      "unitPrice": 389.95,
+      "net": 389.95,
+      "vatRate": 20,
+      "vat": 77.99
+    },
+    {
+      "description": "Bumper fixing clip kit",
+      "quantity": 1,
+      "unitPrice": 12.6,
+      "net": 12.6,
+      "vatRate": 20,
+      "vat": 2.52
+    },
+    {
+      "description": "Paint and materials (LB9A Pure White)",
+      "quantity": 1,
+      "unitPrice": 142,
+      "net": 142,
+      "vatRate": 20,
+      "vat": 28.4
+    },
+    {
+      "description": "Panel labour (hours)",
+      "quantity": 4.5,
+      "unitPrice": 58,
+      "net": 261,
+      "vatRate": 20,
+      "vat": 52.2
+    },
+    {
+      "description": "Paint labour (hours)",
+      "quantity": 3,
+      "unitPrice": 58,
+      "net": 174,
+      "vatRate": 20,
+      "vat": 34.8
+    },
+    {
+      "description": "Headlamp alignment",
+      "quantity": 1,
+      "unitPrice": 35,
+      "net": 35,
+      "vatRate": 20,
+      "vat": 7
+    },
+    {
+      "description": "MOT test fee (outside the scope of VAT)",
+      "quantity": 1,
+      "unitPrice": 54.85,
+      "net": 54.85,
+      "vatRate": 0,
+      "vat": 0
+    }
+  ],
+  "totals": {
+    "net": 1348.7,
+    "vat": 258.77,
+    "gross": 1607.47
+  },
+  "extractionNotes": []
+}

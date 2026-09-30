@@ -1,0 +1,58 @@
+{
+  "supplier": {
+    "name": "Midlands Motor Parts Ltd",
+    "address": "Unit 7, Foundry Lane Trading Estate, Coventry, CV1 4AB",
+    "vatNumber": "GB 123 4567 89"
+  },
+  "invoiceNumber": "MMP-10482",
+  "invoiceDate": "2026-09-12",
+  "dueDate": "2026-10-12",
+  "currency": "GBP",
+  "vatScheme": "standard",
+  "vehicle": {
+    "registration": "AB12 CDE",
+    "vin": "WF0AXXGCDA1234567",
+    "make": "Ford",
+    "model": "Focus"
+  },
+  "lineItems": [
+    {
+      "description": "Front brake pads (pair)",
+      "quantity": 1,
+      "unitPrice": 45,
+      "net": 45,
+      "vatRate": 20,
+      "vat": 9
+    },
+    {
+      "description": "Front brake discs (pair)",
+      "quantity": 1,
+      "unitPrice": 88.5,
+      "net": 88.5,
+      "vatRate": 20,
+      "vat": 17.7
+    },
+    {
+      "description": "Oil filter",
+      "quantity": 2,
+      "unitPrice": 7.45,
+      "net": 14.9,
+      "vatRate": 20,
+      "vat": 2.98
+    },
+    {
+      "description": "Engine oil 5W-30, 5 litre",
+      "quantity": 1,
+      "unitPrice": 32.95,
+      "net": 32.95,
+      "vatRate": 20,
+      "vat": 6.59
+    }
+  ],
+  "totals": {
+    "net": 181.35,
+    "vat": 36.27,
+    "gross": 217.62
+  },
+  "extractionNotes": []
+}

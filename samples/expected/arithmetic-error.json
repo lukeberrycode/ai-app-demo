@@ -1,0 +1,82 @@
+{
+  "supplier": {
+    "name": "Apex Tyre & Exhaust Centre",
+    "address": "41 Holyhead Road, Birmingham, B21 0LA",
+    "vatNumber": "GB 135 7913 57"
+  },
+  "invoiceNumber": "AT-88213",
+  "invoiceDate": "2026-09-21",
+  "dueDate": "2026-10-21",
+  "currency": "GBP",
+  "vatScheme": "standard",
+  "vehicle": {
+    "registration": "YH70 BNU",
+    "vin": "VF1RFB00X63123456",
+    "make": "Renault",
+    "model": "Clio"
+  },
+  "lineItems": [
+    {
+      "description": "Tyre 205/55 R16 91V",
+      "quantity": 2,
+      "unitPrice": 89.5,
+      "net": 179,
+      "vatRate": 20,
+      "vat": 35.8
+    },
+    {
+      "description": "Valve, rubber",
+      "quantity": 2,
+      "unitPrice": 2.5,
+      "net": 5,
+      "vatRate": 20,
+      "vat": 1
+    },
+    {
+      "description": "Fitting and balancing",
+      "quantity": 2,
+      "unitPrice": 15,
+      "net": 30,
+      "vatRate": 20,
+      "vat": 6
+    },
+    {
+      "description": "Four-wheel alignment",
+      "quantity": 1,
+      "unitPrice": 49.95,
+      "net": 49.95,
+      "vatRate": 20,
+      "vat": 9.99
+    },
+    {
+      "description": "Tyre disposal (environmental)",
+      "quantity": 2,
+      "unitPrice": 3.5,
+      "net": 7,
+      "vatRate": 20,
+      "vat": 1.4
+    },
+    {
+      "description": "Exhaust clamp 50mm",
+      "quantity": 1,
+      "unitPrice": 13.45,
+      "net": 13.45,
+      "vatRate": 20,
+      "vat": 2.69
+    },
+    {
+      "description": "Exhaust labour (hours)",
+      "quantity": 0.5,
+      "unitPrice": 56,
+      "net": 28,
+      "vatRate": 20,
+      "vat": 5.6
+    }
+  ],
+  "totals": {
+    "net": 321.4,
+    "vat": 62.48,
+    "gross": 374.88
+  },
+  "extractionNotes": []
+}

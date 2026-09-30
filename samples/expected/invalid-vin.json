@@ -1,0 +1,58 @@
+{
+  "supplier": {
+    "name": "Stratford Prestige Servicing",
+    "address": "Unit 3, Timothy's Bridge Road, Stratford-upon-Avon, CV37 9HY",
+    "vatNumber": "GB 864 2086 42"
+  },
+  "invoiceNumber": "SPS-40077",
+  "invoiceDate": "2026-09-08",
+  "dueDate": "2026-10-08",
+  "currency": "GBP",
+  "vatScheme": "standard",
+  "vehicle": {
+    "registration": "WR21 KHA",
+    "vin": "WDD2050O22F123456",
+    "make": "Mercedes-Benz",
+    "model": "C-Class"
+  },
+  "lineItems": [
+    {
+      "description": "Service B (manufacturer schedule)",
+      "quantity": 1,
+      "unitPrice": 325,
+      "net": 325,
+      "vatRate": 20,
+      "vat": 65
+    },
+    {
+      "description": "Brake fluid DOT 4+, 1 litre",
+      "quantity": 1,
+      "unitPrice": 18.4,
+      "net": 18.4,
+      "vatRate": 20,
+      "vat": 3.68
+    },
+    {
+      "description": "Cabin filter",
+      "quantity": 1,
+      "unitPrice": 42.6,
+      "net": 42.6,
+      "vatRate": 20,
+      "vat": 8.52
+    },
+    {
+      "description": "Pollen filter labour (hours)",
+      "quantity": 0.3,
+      "unitPrice": 95,
+      "net": 28.5,
+      "vatRate": 20,
+      "vat": 5.7
+    }
+  ],
+  "totals": {
+    "net": 414.5,
+    "vat": 82.9,
+    "gross": 497.4
+  },
+  "extractionNotes": []
+}

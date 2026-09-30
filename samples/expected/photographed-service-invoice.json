@@ -1,0 +1,58 @@
+{
+  "supplier": {
+    "name": "Dave's Autocare",
+    "address": "Rear of 18 Albert Street, Rugby, CV21 2RT",
+    "vatNumber": "GB 314 1592 65"
+  },
+  "invoiceNumber": "2291",
+  "invoiceDate": "2026-09-15",
+  "dueDate": "2026-09-29",
+  "currency": "GBP",
+  "vatScheme": "standard",
+  "vehicle": {
+    "registration": "P428 KLV",
+    "vin": "SAXXRWAXCBD123456",
+    "make": "Rover",
+    "model": "200"
+  },
+  "lineItems": [
+    {
+      "description": "Interim service",
+      "quantity": 1,
+      "unitPrice": 115,
+      "net": 115,
+      "vatRate": 20,
+      "vat": 23
+    },
+    {
+      "description": "Spark plugs",
+      "quantity": 4,
+      "unitPrice": 6.75,
+      "net": 27,
+      "vatRate": 20,
+      "vat": 5.4
+    },
+    {
+      "description": "Wiper blades (pair)",
+      "quantity": 1,
+      "unitPrice": 18.95,
+      "net": 18.95,
+      "vatRate": 20,
+      "vat": 3.79
+    },
+    {
+      "description": "Labour (hours)",
+      "quantity": 1,
+      "unitPrice": 48,
+      "net": 48,
+      "vatRate": 20,
+      "vat": 9.6
+    }
+  ],
+  "totals": {
+    "net": 208.95,
+    "vat": 41.79,
+    "gross": 250.74
+  },
+  "extractionNotes": []
+}

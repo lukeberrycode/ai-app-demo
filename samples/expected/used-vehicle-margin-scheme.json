@@ -1,0 +1,34 @@
+{
+  "supplier": {
+    "name": "Brookfield Car Sales",
+    "address": "Brookfield Garage, Leek Road, Stoke-on-Trent, ST4 2QA",
+    "vatNumber": "GB 246 8024 68"
+  },
+  "invoiceNumber": "BCS-2026-311",
+  "invoiceDate": "2026-09-03",
+  "dueDate": "2026-09-10",
+  "currency": "GBP",
+  "vatScheme": "margin",
+  "vehicle": {
+    "registration": "LD68 XTP",
+    "vin": "SJNFAAJ11U1234567",
+    "make": "Nissan",
+    "model": "Qashqai"
+  },
+  "lineItems": [
+    {
+      "description": "Nissan Qashqai 1.3 DIG-T Acenta Premium, 5dr, Grey — LD68 XTP",
+      "quantity": 1,
+      "unitPrice": 8450,
+      "net": 8450,
+      "vatRate": null,
+      "vat": null
+    }
+  ],
+  "totals": {
+    "net": 8450,
+    "vat": null,
+    "gross": 8450
+  },
+  "extractionNotes": []
+}
