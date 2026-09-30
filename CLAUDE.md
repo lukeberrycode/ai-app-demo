@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 1 (Walking skeleton) — complete; the live URL extracts invoices end to end. Next: Step 2 (Schema and structured output). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
+**Current status:** Step 2 (Schema and structured output) — complete locally (263/264 fields exact against ground truth); live deploy check pending. Next: Step 3 (Validation rules). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
 
 ---
 
@@ -84,10 +84,11 @@ Rules for the core:
 
 The invoice has two representations with the same shape:
 
-- **Wire schema** — zod, in `shared/schema.ts`. Money is decimal pounds (e.g. `123.45`), as printed on the invoice. Used by the function and the front end to parse model output. The model is not asked to do unit conversion.
+- **Wire schema** — zod, in `shared/schema.ts`. Money is decimal pounds (e.g. `123.45`), as printed on the invoice. Used by the function and the front end to parse model output, and converted to the structured-output JSON schema sent to the API (`z.toJSONSchema`, so field descriptions and enums carry through). The model does not convert money. Dates are the one conversion: the model writes them as ISO `YYYY-MM-DD`, reading UK dates day first.
+- **Absent values on the wire:** text fields use an empty string, and numbers, dates and the vehicle use `null`. The API caps a structured-output schema at 16 union-typed (nullable) fields (verified 2026-09-30); non-nullable text keeps the schema at 11. `toInvoice` turns empty text into `null`, so the core type uses `null` throughout.
 - **Core type** — plain TypeScript, in `src/core/invoice.ts`. Money is integer pence, which avoids floating-point rounding errors.
 
-A mapping function in `src/lib/` converts a successfully parsed wire invoice into the core type, using `money.ts`. TypeScript checks the mapping, so the two representations cannot drift apart silently.
+A mapping function in `src/lib/` converts a successfully parsed wire invoice into the core type, using `money.ts`. A compile-time check in `toInvoice.ts` fails if the wire schema and the core type gain or lose a field on only one side.
 
 **Verify** that `shared/` resolves on both sides: Vite for the front end, and the Netlify Functions bundler (esbuild) for `netlify/functions/`. Set the tsconfig `include`/`paths` so `shared/` type-checks with both.
 
