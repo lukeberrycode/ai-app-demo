@@ -4,7 +4,17 @@
 
 You upload a supplier invoice. An AI model reads it and fills in a form with what it finds: the supplier, the invoice details, the vehicle, every line item and the totals. The app then checks that data against a set of rules, such as whether the lines add up and whether the VIN is valid, and shows you anything that looks wrong.
 
-You make the decision. You compare the form with the invoice, correct anything that was misread, deal with any problems, and then approve or reject the invoice. Everything you do is recorded in an audit trail that you can download.
+Then you compare the form with the invoice, review any errors and warnings, and decide what to do next:
+
+- If you think the form matches the invoice and there are no errors, you can **Approve** it.
+- If you think that the AI has misread anything on the invoice, including missing or extra line items, you can correct it in the form, then **Approve** it.
+- If you think the original invoice contains errors, and it should be sent back to the party that raised it, you can **Reject** it.
+- If you think the original invoice contains an error, but you have confirmed the correct value from another source (for example, the VIN on the vehicle's registration document), you can correct it in the form, then **Approve** it. The audit trail keeps both the printed value and your correction.
+- If you think an error reported by the app does not apply to this invoice, or you accept the invoice despite it, you can **override** the error by giving a reason, then **Approve** the invoice.
+- If you think a warning points to a wrong value, you can correct it. If the value is right, you need do nothing: warnings never stop you approving.
+- If you think the file should not be processed at all (it is not an invoice, it is a duplicate, or it is addressed to someone else), you can **Reject** it.
+
+You can approve only when every error has been corrected or overridden. Everything you do is recorded in an audit trail that you can download.
 
 The AI model only reads the invoice. It does not decide whether the data is right; the checks and you do.
 
