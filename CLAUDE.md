@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 0 (Setup) — complete. Next: Step 1 (Walking skeleton). Update this line as each step in §5 is completed.
+**Current status:** Step 1 (Walking skeleton) — in progress. Works end to end under `netlify dev`; live deploy check pending. Update this line as each step in §5 is completed.
 
 ---
 
@@ -172,10 +172,11 @@ Rules include UK motor-trade specifics:
 ### 3.8 Safeguards (public URL)
 
 - A hard monthly spend cap is set on the model provider account. This is the real backstop.
-- There is a maximum upload size, enforced both client-side and in the function. **Verify current Netlify Function request-body limits.** Base64 encoding adds about 33% to file size, so the client limit sits comfortably below the function's limit.
+- There is a maximum upload size, enforced both client-side and in the function. Netlify buffers function request bodies up to **6 MB**, and binary uploads are base64-encoded (about 33% overhead), so the effective file limit is about 4.5 MB (verified 2026-09-30). The upload limit is **4 MB** (`shared/upload.ts`), comfortably below that.
 - Only PDF, JPEG and PNG files are accepted.
 - The function applies rate limiting. Netlify's rate-limit configuration is used if the plan supports it; otherwise a simple per-instance limiter is used, with the spend cap as the backstop.
-- The function uses a timeout and returns a clean error. **Verify the current Netlify synchronous function timeout.** Vision extraction can take several seconds. If the limit is tight, the options are a faster model or a background function with polling.
+- The function uses a timeout and returns a clean error. Netlify's synchronous function limit is **60 seconds** and cannot be raised (verified 2026-09-30). The model call times out at 50 seconds with no retries, leaving time for a clean error. A one-page invoice extracts in about 5 seconds at low effort. If that grows towards the limit, the options are a faster model, lower effort, or a background function with polling.
+- Functions run on the build's Node version (Node 24, from `.nvmrc`) when it is a supported AWS Lambda runtime, and fall back to Node 24 otherwise. `AWS_LAMBDA_JS_RUNTIME` overrides this (verified 2026-09-30).
 
 ### 3.9 Sample data
 
@@ -297,7 +298,7 @@ Each step ends in a working, deployable state. Deploying early matters more than
 
 Resolved at the start of Step 0:
 
-- **Model provider and model.** Anthropic Claude, via the official `@anthropic-ai/sdk` in the `anthropic.ts` adapter. It is vision-capable, accepts PDFs natively (so no client-side conversion is needed), and supports structured output through tool use. The default model is `claude-sonnet-5-5`, which balances speed and cost within the function timeout. The model ID is configuration, not code.
+- **Model provider and model.** Anthropic Claude, via the official `@anthropic-ai/sdk` in the `anthropic.ts` adapter. It is vision-capable, accepts PDFs natively (so no client-side conversion is needed), and supports structured output through tool use. The default model is `claude-sonnet-5-5`, which balances speed and cost within the function timeout. The model ID is configuration, not code: `CLAUDE_MODEL` overrides the default. Requests use low effort (reading needs little reasoning) and the server-side refusal fallback (`fallbacks: "default"`).
 - **UI framework.** React, with Vite and TypeScript. The review screen carries a lot of connected state (editable fields, live re-validation, overrides, the timeline).
 - **Invoice rendering.** The browser's built-in viewer: PDFs in an `<iframe>` from a blob URL, images in an `<img>`. No pdf.js dependency.
 - **Licence.** MIT.
