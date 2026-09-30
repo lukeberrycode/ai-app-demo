@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent } from "react";
-import type { Invoice } from "../core/invoice.ts";
+import type { Invoice, Issue } from "../core/invoice.ts";
+import { validateInvoice } from "../core/validation/index.ts";
 import { toInvoice } from "../lib/toInvoice.ts";
 import { ExtractResponseSchema } from "../../shared/schema.ts";
 import {
@@ -11,7 +12,13 @@ import {
 type State =
   | { status: "idle" }
   | { status: "loading"; fileName: string }
-  | { status: "done"; fileName: string; seconds: number; invoice: Invoice }
+  | {
+      status: "done";
+      fileName: string;
+      seconds: number;
+      invoice: Invoice;
+      issues: Issue[];
+    }
   | { status: "error"; message: string; details?: string[] };
 
 export default function App() {
@@ -56,11 +63,13 @@ export default function App() {
         });
         return;
       }
+      const invoice = toInvoice(parsed.data.invoice);
       setState({
         status: "done",
         fileName: file.name,
         seconds: (performance.now() - started) / 1000,
-        invoice: toInvoice(parsed.data.invoice),
+        invoice,
+        issues: validateInvoice(invoice, { today: localIsoDate() }),
       });
     } catch {
       setState({ status: "error", message: "Could not reach the server." });
@@ -94,6 +103,7 @@ export default function App() {
           <p>
             {state.fileName} — {state.seconds.toFixed(1)} s
           </p>
+          <IssueList issues={state.issues} />
           <p>Parsed invoice (money in pence):</p>
           <pre>{JSON.stringify(state.invoice, null, 2)}</pre>
         </>
@@ -114,4 +124,33 @@ function errorFrom(
     return { message: String(body.error), details };
   }
   return { message: `Request failed (${status}).` };
+}
+
+function IssueList({ issues }: { issues: Issue[] }) {
+  if (issues.length === 0) return <p>No issues found.</p>;
+  const errors = issues.filter((issue) => issue.severity === "error").length;
+  const warnings = issues.length - errors;
+  return (
+    <>
+      <p>
+        {errors} error{errors === 1 ? "" : "s"}, {warnings} warning
+        {warnings === 1 ? "" : "s"}:
+      </p>
+      <ul>
+        {issues.map((issue) => (
+          <li key={`${issue.ruleId}:${issue.field}`}>
+            <strong>{issue.severity.toUpperCase()}</strong> {issue.field}:{" "}
+            {issue.message}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+/** Today's date in the browser's time zone, as YYYY-MM-DD. */
+function localIsoDate(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
