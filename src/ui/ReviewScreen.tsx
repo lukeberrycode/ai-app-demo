@@ -1,6 +1,10 @@
-import { useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import type { Invoice, Issue } from "../core/invoice.ts";
-import { initialReview, reviewReducer, summarise } from "../lib/review.ts";
+import { auditedReducer, startAudit, toAuditRecord } from "../lib/audit.ts";
+import { summarise, type ReviewAction } from "../lib/review.ts";
+import { AuditTimeline } from "./AuditTimeline.tsx";
+import { downloadRecord } from "./download.ts";
+import { saveRecord } from "./storage.ts";
 import type { FieldContext } from "./fields.tsx";
 import { InvoiceForm } from "./InvoiceForm.tsx";
 import { InvoicePreview } from "./InvoicePreview.tsx";
@@ -13,17 +17,40 @@ export interface UploadedFile {
 }
 
 export function ReviewScreen({
+  invoiceId,
   file,
   extracted,
+  rawModelOutput,
+  extractedAt,
   today,
   onStartAgain,
 }: {
+  invoiceId: string;
   file: UploadedFile;
   extracted: Invoice;
+  rawModelOutput: unknown;
+  extractedAt: string;
   today: string;
   onStartAgain: () => void;
 }) {
-  const [state, dispatch] = useReducer(reviewReducer, extracted, initialReview);
+  const [audited, dispatchTimed] = useReducer(auditedReducer, null, () =>
+    startAudit(invoiceId, extracted, extractedAt),
+  );
+  const state = audited.review;
+  const dispatch = (action: ReviewAction) =>
+    dispatchTimed({ action, at: new Date().toISOString() });
+  const record = useMemo(
+    () =>
+      toAuditRecord(audited, {
+        fileName: file.name,
+        rawModelOutput,
+        extracted,
+      }),
+    [audited, file.name, rawModelOutput, extracted],
+  );
+
+  // Keep the session history current after every change.
+  useEffect(() => saveRecord(record), [record]);
   const [invalidInputs, setInvalidInputs] = useState<ReadonlySet<string>>(
     new Set(),
   );
@@ -130,6 +157,11 @@ export function ReviewScreen({
           onRemoveLine={removeLine}
         />
       </div>
+
+      <AuditTimeline
+        entries={audited.entries}
+        onExport={() => downloadRecord(record)}
+      />
     </div>
   );
 }

@@ -7,17 +7,29 @@ import {
   MAX_UPLOAD_BYTES,
   isInvoiceMediaType,
 } from "../../shared/upload.ts";
+import type { AuditRecord } from "../lib/audit.ts";
+import { History } from "./History.tsx";
 import { ReviewScreen, type UploadedFile } from "./ReviewScreen.tsx";
+import { clearRecords, loadRecords } from "./storage.ts";
 import "./styles.css";
 
 type State =
   | { status: "idle" }
   | { status: "loading"; file: UploadedFile }
   | { status: "error"; message: string; details?: string[] }
-  | { status: "review"; file: UploadedFile; invoice: Invoice; today: string };
+  | {
+      status: "review";
+      invoiceId: string;
+      file: UploadedFile;
+      invoice: Invoice;
+      rawModelOutput: unknown;
+      extractedAt: string;
+      today: string;
+    };
 
 export default function App() {
   const [state, setState] = useState<State>({ status: "idle" });
+  const [history, setHistory] = useState<AuditRecord[]>(loadRecords);
   const fileUrl =
     state.status === "loading" || state.status === "review"
       ? state.file.url
@@ -74,8 +86,11 @@ export default function App() {
       }
       setState({
         status: "review",
+        invoiceId: crypto.randomUUID(),
         file,
         invoice: toInvoice(parsed.data.invoice),
+        rawModelOutput: parsed.data.raw,
+        extractedAt: new Date().toISOString(),
         today: localIsoDate(),
       });
     } catch {
@@ -122,11 +137,27 @@ export default function App() {
 
       {state.status === "review" && (
         <ReviewScreen
-          key={state.file.url}
+          key={state.invoiceId}
+          invoiceId={state.invoiceId}
           file={state.file}
           extracted={state.invoice}
+          rawModelOutput={state.rawModelOutput}
+          extractedAt={state.extractedAt}
           today={state.today}
-          onStartAgain={() => setState({ status: "idle" })}
+          onStartAgain={() => {
+            setHistory(loadRecords());
+            setState({ status: "idle" });
+          }}
+        />
+      )}
+
+      {state.status !== "review" && (
+        <History
+          records={history}
+          onClear={() => {
+            clearRecords();
+            setHistory([]);
+          }}
         />
       )}
     </div>

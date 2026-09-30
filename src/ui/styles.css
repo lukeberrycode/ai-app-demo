@@ -443,3 +443,82 @@ table.lines td {
   flex-direction: column;
   gap: 3px;
 }
+
+/* Audit trail and history */
+
+.audit,
+.history {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 12px;
+}
+
+.audit-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.audit h2,
+.history h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.timeline,
+.history ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: grid;
+  gap: 6px;
+}
+
+.timeline li,
+.history li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--bg);
+  overflow-wrap: anywhere;
+}
+
+.timeline time,
+.actor,
+.muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline .badge {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.timeline .overridden .badge,
+.timeline .override_removed .badge {
+  background: var(--overridden-bg);
+  color: var(--overridden);
+}
+
+.timeline .approved .badge {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.timeline .rejected .badge {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.history .status.reviewing {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
