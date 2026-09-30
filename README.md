@@ -62,6 +62,7 @@ The invoice preview uses the browser's built-in PDF and image viewers, so no ren
 - **Vite** and **@vitejs/plugin-react**: the dev server and build tool for the front end, with React support.
 - **Netlify** and the **Netlify CLI**: hosting for the static site and the serverless function. `netlify dev` runs both locally, together with the environment variables.
 - **Vitest**: the unit test runner. The validation rules have full coverage.
+- **@vitest/coverage-v8**: coverage reports for Vitest. `npm run test:coverage` fails if anything in `src/core/` drops below 100%.
 - **ESLint**, with **@eslint/js**, **typescript-eslint**, **eslint-plugin-react-hooks**, **eslint-plugin-react-refresh** and **globals**: finds likely bugs and enforces the layer boundaries. `src/core/` may import only from inside itself, and cannot touch the DOM, network, storage, environment or clock.
 - **eslint-config-prettier**: switches off ESLint rules that would clash with Prettier.
 - **Prettier**: automatic code formatting.

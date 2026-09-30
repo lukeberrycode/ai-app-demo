@@ -140,6 +140,16 @@ Rules include UK motor-trade specifics:
 | Due date is on or after invoice date                                            | warning  |                                                                                                         |
 | Currency is GBP                                                                 | warning  |                                                                                                         |
 
+How the rules read the table (implemented in `src/core/validation/`, one file per area):
+
+- Arithmetic rules skip when a figure they need is missing; `required-fields` reports missing required values.
+- VAT is checked per line at the line's stated rate (20%, 5% or 0%). When no line shows VAT, a standard-rated invoice's VAT total is checked at 20% of its net total.
+- The margin-scheme warning appears on every margin-scheme invoice, as a notice that no VAT is shown and none is reclaimable. If VAT is shown, the message says so instead.
+- Registration and VAT-number checks ignore spacing and case. The VIN check is exact.
+- A present date that is not a real `YYYY-MM-DD` date is an error (`date-format`). This matters once fields are editable.
+- Missing currency warns, as does any currency other than GBP.
+- `tests/validation/samples.test.ts` checks that each sample invoice raises exactly the issues it was designed for.
+
 ### 3.5 Review UI
 
 - The layout is split: the invoice preview is on the left, and the extracted fields form is on the right.
@@ -322,7 +332,7 @@ Resolved at the start of Step 0:
 
 ## 8. Development notes
 
-- **Commands:** `npm run dev` (Vite only), `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run format`. `netlify dev` serves the front end and functions together on `http://localhost:8888`, with variables from `.env`.
+- **Commands:** `npm run dev` (Vite only), `npm run lint`, `npm run typecheck`, `npm test`, `npm run test:coverage` (fails below 100% on `src/core/`), `npm run build`, `npm run format`. `netlify dev` serves the front end and functions together on `http://localhost:8888`, with variables from `.env`.
 - **Live site:** https://voluble-shortbread-33d0b9.netlify.app, deployed from `main`. It sits behind Netlify visitor access until Step 7.
 - **TypeScript** is pinned to `~6.0` because the `typescript-eslint` peer range stops below 6.1. Check that range before upgrading.
 - **`netlify dev:exec`** parses flags itself, so `netlify dev:exec node -p "…"` fails with "unknown option". Use a command without flags (e.g. `printenv NAME`) or run a script file.
