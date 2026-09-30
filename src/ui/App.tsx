@@ -17,6 +17,8 @@ import type { AuditRecord } from "../lib/audit.ts";
 import { HelpPanel } from "./HelpPanel.tsx";
 import { History } from "./History.tsx";
 import { ReviewScreen, type UploadedFile } from "./ReviewScreen.tsx";
+import { SamplePicker } from "./SamplePicker.tsx";
+import { MEDIA_TYPES, sampleUrls } from "./samples.ts";
 import { clearRecords, loadRecords } from "./storage.ts";
 import "./styles.css";
 
@@ -54,11 +56,28 @@ export default function App() {
     return () => URL.revokeObjectURL(fileUrl);
   }, [fileUrl]);
 
-  async function handleFile(event: ChangeEvent<HTMLInputElement>) {
+  function handleUpload(event: ChangeEvent<HTMLInputElement>) {
     const selected = event.target.files?.[0];
     event.target.value = ""; // allow re-selecting the same file
-    if (!selected) return;
+    if (selected) void extract(selected);
+  }
 
+  async function handleSample(name: string) {
+    try {
+      const response = await fetch(sampleUrls[name]);
+      if (!response.ok) throw new Error(String(response.status));
+      const extension = name.split(".").pop() ?? "";
+      const blob = await response.blob();
+      void extract(new File([blob], name, { type: MEDIA_TYPES[extension] }));
+    } catch {
+      setState({
+        status: "error",
+        message: "Could not load the sample invoice.",
+      });
+    }
+  }
+
+  async function extract(selected: File) {
     if (!isInvoiceMediaType(selected.type)) {
       setState({ status: "error", message: "Upload a PDF, JPEG or PNG file." });
       return;
@@ -131,7 +150,7 @@ export default function App() {
             <input
               type="file"
               accept={INVOICE_MEDIA_TYPES.join(",")}
-              onChange={handleFile}
+              onChange={handleUpload}
               disabled={state.status === "loading"}
             />
           </label>
@@ -172,6 +191,23 @@ export default function App() {
             setState({ status: "idle" });
           }}
         />
+      )}
+
+      {state.status !== "review" && (
+        <>
+          {state.status === "idle" && (
+            <p className="intro">
+              Upload a supplier invoice and an AI model reads it into a form.
+              The app checks the data, and you review it: correct, override or
+              approve, with every step recorded. New here? Try a sample below,
+              and open <strong>Help</strong> for the full guide.
+            </p>
+          )}
+          <SamplePicker
+            disabled={state.status === "loading"}
+            onPick={(name) => void handleSample(name)}
+          />
+        </>
       )}
 
       {state.status !== "review" && (

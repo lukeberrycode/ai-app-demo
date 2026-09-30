@@ -620,3 +620,59 @@ button.help-toggle {
 .help-content li {
   margin: 3px 0;
 }
+
+/* Upload screen */
+
+.intro {
+  max-width: 70ch;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.samples {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px 14px;
+}
+
+.samples h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.samples p {
+  margin: 4px 0 10px;
+}
+
+.samples ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 8px;
+}
+
+button.sample {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+}
+
+button.sample:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button.sample span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
