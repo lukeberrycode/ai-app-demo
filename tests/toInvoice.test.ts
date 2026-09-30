@@ -33,6 +33,14 @@ describe("toInvoice", () => {
     expect(invoice.invoiceDate).toBe("2026-09-08");
   });
 
+  it("keeps a missing vehicle as null", () => {
+    const wire = WireInvoiceSchema.parse(
+      expectedSamples["parts-supplier-clean"],
+    );
+    wire.vehicle = null;
+    expect(toInvoice(wire).vehicle).toBeNull();
+  });
+
   it("turns empty or blank text into null", () => {
     const wire = WireInvoiceSchema.parse(expectedSamples["invalid-vin"]);
     wire.supplier.vatNumber = "";
