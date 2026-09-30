@@ -154,20 +154,25 @@ The bar at the top tells you what to do:
 
 ## If an invoice cannot be read
 
-The upload button stays available, so you can try again straight away.
+If reading fails, the app says why. Where trying again could help, it offers a **Try again** button that sends the same file again. You can also choose another file at any time.
 
-| The app says                                         | What to do                                                              |
-| ---------------------------------------------------- | ----------------------------------------------------------------------- |
-| Upload a PDF, JPEG or PNG file.                      | Choose a file of one of those types.                                    |
-| The file is too large (limit 4 MB).                  | Use a smaller scan, or save the PDF at a lower quality.                 |
-| The model took too long to respond.                  | Try again. If it keeps happening, try a smaller or clearer file.        |
-| The model is rate limited.                           | Wait a minute, then try again.                                          |
-| The model declined to read this file.                | Check that the file is an invoice, then try again.                      |
-| The model's output was cut off.                      | Try again. Very long invoices may not fit.                              |
-| The model's output did not match the invoice schema. | Try again. The model occasionally returns an answer the app cannot use. |
-| Model request failed, or Request failed              | Try again later. The service or the network had a problem.              |
-| Could not reach the server.                          | Check your internet connection, then try again.                         |
-| The server is not configured correctly.              | This cannot be fixed from your side. Contact whoever runs the app.      |
+| The app says                                                                   | What to do                                                                                   |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Upload a PDF, JPEG or PNG file.                                                | Choose a file of one of those types.                                                         |
+| The file is too large (limit 4 MB).                                            | Use a smaller scan, or save the PDF at a lower quality.                                      |
+| The file is empty.                                                             | Choose the file again; it may not have saved properly.                                       |
+| The AI model took too long to read the invoice.                                | Try again. If it keeps happening, try a smaller or clearer file.                             |
+| The server took too long to respond.                                           | Try again.                                                                                   |
+| The AI service is busy.                                                        | Wait a minute, then try again.                                                               |
+| The AI service is temporarily unavailable.                                     | Wait a minute, then try again.                                                               |
+| Too many invoices have been sent from your connection in the last few minutes. | Wait a few minutes, then try again. Each visitor can send up to 10 invoices every 3 minutes. |
+| The demo has reached its usage limit for now.                                  | The demo has used its budget. Try again later.                                               |
+| The AI model declined to read this file.                                       | Check that the file is an invoice.                                                           |
+| The AI model's answer was cut off.                                             | Try again. Very long invoices may not fit.                                                   |
+| The AI model's answer could not be used.                                       | Try again. The model occasionally returns an answer the app cannot use.                      |
+| The AI service returned an error.                                              | Try again.                                                                                   |
+| Could not reach the server.                                                    | Check your internet connection, then try again.                                              |
+| The server is not configured correctly.                                        | This cannot be fixed from your side. Contact whoever runs the app.                           |
 
 ## Your records
 
