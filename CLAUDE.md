@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 3 (Validation rules) — complete locally; the rules run in the UI after extraction. Live check pending. Next: Step 4 (Review UI). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
+**Current status:** Step 4 (Review UI) — complete locally. Live check pending. Next: Step 5 (Audit trail). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
 
 ---
 
@@ -158,6 +158,10 @@ How the rules read the table (implemented in `src/core/validation/`, one file pe
 - Actions are **Approve** (enabled only when no unresolved errors remain), **Override** (per error, requires a reason) and **Reject**.
 - An issues summary panel sits at the top, similar to an exceptions queue.
 - A clear loading state is shown during extraction, and all failures have explicit error states: upload too large, model timeout, schema parse failure, and rate limit hit.
+- Review logic is a pure reducer in `src/lib/review.ts` (edit, add/remove line, override, undo override, approve, reject). Each action is a plain object, ready to become an audit entry in Step 5. The components in `src/ui/` render state and dispatch actions.
+- An override belongs to one rule on one field (`issueKey` = `ruleId@field`). It stays while that issue exists; removing a line moves overrides on later lines with them and drops those on the removed line.
+- Money and number inputs keep the typed text as a draft and update the invoice only when it parses. An unreadable value is shown at the field and blocks Approve.
+- An approved or rejected invoice is read-only.
 
 ### 3.6 Audit trail
 
