@@ -151,7 +151,10 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Dealership Invoice Extractor</h1>
+        <div className="brand">
+          <h1>Dealership Invoice Extractor</h1>
+          <p>Read, check and approve supplier invoices</p>
+        </div>
         <button
           ref={helpButton}
           type="button"

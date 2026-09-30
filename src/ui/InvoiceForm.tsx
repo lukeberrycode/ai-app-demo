@@ -195,6 +195,7 @@ export function InvoiceForm({
                 return (
                   <tr key={`${lineGeneration}-${i}`}>
                     <td
+                      data-label="Description"
                       className={`cell ${severityClass(descriptionIssues, ctx.overrides)}`}
                     >
                       <input
@@ -214,7 +215,7 @@ export function InvoiceForm({
                       />
                       <IssueMessages issues={descriptionIssues} ctx={ctx} />
                     </td>
-                    <td>
+                    <td data-label="Qty">
                       <NumberField
                         field={f("quantity")}
                         label={`Line ${i + 1} quantity`}
@@ -223,7 +224,7 @@ export function InvoiceForm({
                         compact
                       />
                     </td>
-                    <td>
+                    <td data-label="Unit £">
                       <MoneyField
                         field={f("unitPrice")}
                         label={`Line ${i + 1} unit price`}
@@ -232,7 +233,7 @@ export function InvoiceForm({
                         compact
                       />
                     </td>
-                    <td>
+                    <td data-label="Net £">
                       <MoneyField
                         field={f("net")}
                         label={`Line ${i + 1} net`}
@@ -241,7 +242,7 @@ export function InvoiceForm({
                         compact
                       />
                     </td>
-                    <td>
+                    <td data-label="VAT %">
                       <NumberField
                         field={f("vatRate")}
                         label={`Line ${i + 1} VAT rate`}
@@ -250,7 +251,7 @@ export function InvoiceForm({
                         compact
                       />
                     </td>
-                    <td>
+                    <td data-label="VAT £">
                       <MoneyField
                         field={f("vat")}
                         label={`Line ${i + 1} VAT`}
@@ -259,7 +260,7 @@ export function InvoiceForm({
                         compact
                       />
                     </td>
-                    <td>
+                    <td className="line-actions">
                       {!ctx.readOnly && (
                         <button
                           type="button"
