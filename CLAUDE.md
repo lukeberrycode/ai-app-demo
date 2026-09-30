@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 4 (Review UI) — complete locally. Live check pending. Next: Step 5 (Audit trail). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
+**Current status:** Step 5 (Audit trail) — complete locally. Live check pending. Next: Step 6 (the remaining in-app sample picker and optional `eval.ts`; the samples themselves exist). The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
 
 ---
 
@@ -178,11 +178,16 @@ How the rules read the table (implemented in `src/core/validation/`, one file pe
 
 - The trail is shown as a timeline in the UI and can be exported as JSON.
 - The raw model output is kept alongside the audit trail. This makes it possible to compare what the model extracted with what the user approved.
+- Implemented in `src/lib/audit.ts` as an audited reducer around the review reducer. An action that changes the review appends an entry; a refused action (approve with errors left, override without a reason, any change after a decision) records nothing. Timestamps are passed in.
+- Additions to the entry model above: an `override_removed` action for undoing an override; an optional `ruleId` on override entries; added and removed lines are `edited` entries on `lineItems[i]` with the whole line as `before`/`after`.
+- Consecutive edits to one field (keystrokes) merge into one entry with the first `before` and the last `after`; an edit that returns to its starting value is dropped.
+- The exported record holds the entries, the raw model output, the invoice as extracted and as it stands, the overrides, and the status.
 
 ### 3.7 Persistence
 
 - There is no database. State is held in memory, with `localStorage` for the current session's invoices and audit trail.
 - No uploaded documents are stored server-side. The function processes each file and discards it.
+- Each invoice's audit record is saved to `localStorage` after every change (`src/ui/storage.ts`, newest 50 kept) and listed on the upload screen as "This session", with JSON export. Reads and writes are guarded, so blocked or full storage never breaks a review. The uploaded file itself is not stored, so past invoices can be exported but not reopened.
 
 ### 3.8 Safeguards (public URL)
 
