@@ -15,7 +15,7 @@ The model does the reading. Everything that decides whether the data can be trus
 5. Anything that fails appears as an exception in the review screen. You correct it, override it with a written reason, or reject the invoice.
 6. Every step is recorded in the audit trail, alongside the raw model output.
 
-Step-by-step guidance for reviewers, as if/then journeys, is in [docs/user-journeys.md](docs/user-journeys.md).
+The [user guide](docs/user-guide.md) explains how to review an invoice. The app shows the same guide under **Help**.
 
 ## Architecture
 
@@ -56,7 +56,7 @@ None, by design.
 - **React** and **react-dom**: the UI library for the upload, review and audit screens. The review screen has a lot of connected state (editable fields, live re-validation, overrides), and React keeps that manageable.
 - **@anthropic-ai/sdk**: Anthropic's client library for the Claude API. Claude reads images and PDFs directly, so no conversion step is needed. It is used only inside the serverless function's model adapter. The API key stays on the server.
 
-- **marked**: converts Markdown to HTML. The in-app Help guide is `docs/user-journeys.md`, rendered by marked when the app is built, so the guide and the documentation are the same text.
+- **marked**: converts Markdown to HTML. The in-app Help guide is `docs/user-guide.md`, rendered by marked when the app is built, so the guide and the documentation are the same text.
 
 The invoice preview uses the browser's built-in PDF and image viewers, so no rendering library is needed.
 

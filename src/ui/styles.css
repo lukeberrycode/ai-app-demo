@@ -582,8 +582,9 @@ button.help-toggle {
   outline: none;
 }
 
-.help-content h1 {
-  font-size: 1.3rem;
+/* The panel header already shows the guide's title. */
+.help-content > h1:first-child {
+  display: none;
 }
 
 .help-content h2 {

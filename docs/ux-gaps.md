@@ -1,6 +1,6 @@
 # Known UX gaps
 
-Companion to [user-journeys.md](user-journeys.md), which is also the in-app Help guide. Places where the app does not yet guide the reviewer, or where a mistake is easy to make:
+Engineering notes on the review UI. The reviewer-facing documentation is [user-guide.md](user-guide.md), which is also the in-app Help guide. Places where the app does not yet guide the reviewer, or where a mistake is easy to make:
 
 1. **Guidance is terse.** The only instruction on the review screen is the one-line reason Approve is disabled. Nothing tells a first-time reviewer to compare every field with the invoice (2.1), or explains the choice in 2.4.
 2. **Misreads are invisible.** The rules cannot catch a value that was misread consistently, and nothing prompts the reviewer to check each field.
