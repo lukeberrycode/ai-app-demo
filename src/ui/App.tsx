@@ -1,4 +1,10 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import type { Invoice } from "../core/invoice.ts";
 import { toInvoice } from "../lib/toInvoice.ts";
 import { ExtractResponseSchema } from "../../shared/schema.ts";
@@ -8,6 +14,7 @@ import {
   isInvoiceMediaType,
 } from "../../shared/upload.ts";
 import type { AuditRecord } from "../lib/audit.ts";
+import { HelpPanel } from "./HelpPanel.tsx";
 import { History } from "./History.tsx";
 import { ReviewScreen, type UploadedFile } from "./ReviewScreen.tsx";
 import { clearRecords, loadRecords } from "./storage.ts";
@@ -30,6 +37,12 @@ type State =
 export default function App() {
   const [state, setState] = useState<State>({ status: "idle" });
   const [history, setHistory] = useState<AuditRecord[]>(loadRecords);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const helpButton = useRef<HTMLButtonElement>(null);
+  const closeHelp = useCallback(() => {
+    setHelpOpen(false);
+    helpButton.current?.focus();
+  }, []);
   const fileUrl =
     state.status === "loading" || state.status === "review"
       ? state.file.url
@@ -102,6 +115,16 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <h1>Dealership Invoice Extractor</h1>
+        <button
+          ref={helpButton}
+          type="button"
+          className="help-toggle"
+          aria-expanded={helpOpen}
+          aria-controls="help-panel"
+          onClick={() => (helpOpen ? closeHelp() : setHelpOpen(true))}
+        >
+          <span aria-hidden="true">ⓘ</span> Help
+        </button>
         {state.status !== "review" && (
           <label className="upload">
             <span>Upload an invoice (PDF, JPEG or PNG, up to 4 MB)</span>
@@ -160,6 +183,7 @@ export default function App() {
           }}
         />
       )}
+      <HelpPanel open={helpOpen} onClose={closeHelp} />
     </div>
   );
 }

@@ -56,6 +56,8 @@ None, by design.
 - **React** and **react-dom**: the UI library for the upload, review and audit screens. The review screen has a lot of connected state (editable fields, live re-validation, overrides), and React keeps that manageable.
 - **@anthropic-ai/sdk**: Anthropic's client library for the Claude API. Claude reads images and PDFs directly, so no conversion step is needed. It is used only inside the serverless function's model adapter. The API key stays on the server.
 
+- **marked**: converts Markdown to HTML. The in-app Help guide is `docs/user-journeys.md`, rendered by marked when the app is built, so the guide and the documentation are the same text.
+
 The invoice preview uses the browser's built-in PDF and image viewers, so no rendering library is needed.
 
 ### Development tools
