@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** Step 8 (Polish and documentation) — complete locally: dark mode, phone layout, readable field names, and the README (live link, Try this, design decisions, local setup, testing). Live check pending. All planned steps are then complete; remaining ideas are in `docs/ux-gaps.md`. The sample invoices and ground truth from Step 6 were built ahead on request; the in-app picker and `eval.ts` are still to do. Update this line as each step in §5 is completed.
+**Current status:** All steps in §5 are complete. Step 8 (Polish and documentation) was checked live on 2026-10-01: the sample picker, extraction, override, edit, approve, audit trail and session history on desktop, and the phone layout and dark mode at 390 px. Remaining ideas are in `docs/ux-gaps.md`. Update this line when new work starts.
 
 ---
 
