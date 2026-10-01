@@ -29,7 +29,7 @@ After an invoice has been read, the screen has four parts:
 
 - **The bar at the top** shows the file name and the **Reject** and **Approve** buttons. When **Approve** is unavailable, the bar tells you why.
 - **The issues list** sits below the bar. Its heading counts the unresolved errors, overridden errors and warnings. Each issue names the field it concerns; click the field name to jump to it in the form.
-- **The invoice** is on the left, exactly as uploaded. You can scroll it, and zoom into PDFs with the viewer's controls.
+- **The invoice** is on the left, exactly as uploaded. You can scroll it. For a PDF, **−** and **+** zoom in and out, the percentage between them returns to the full width, and **Open file** opens the PDF on its own.
 - **The form** is on the right, filled in by the AI model. Every field can be edited. A field with a problem is outlined in colour, with the explanation underneath:
   - **Red** means an error.
   - **Amber** means a warning.

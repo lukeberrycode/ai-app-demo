@@ -323,7 +323,7 @@ Resolved at the start of Step 0:
 
 - **Model provider and model.** Anthropic Claude, via the official `@anthropic-ai/sdk` in the `anthropic.ts` adapter. It is vision-capable, accepts PDFs natively (so no client-side conversion is needed), and supports structured output through tool use. The default model is `claude-sonnet-5-5`, which balances speed and cost within the function timeout. The model ID is configuration, not code: `CLAUDE_MODEL` overrides the default. Requests use low effort (reading needs little reasoning) and the server-side refusal fallback (`fallbacks: "default"`).
 - **UI framework.** React, with Vite and TypeScript. The review screen carries a lot of connected state (editable fields, live re-validation, overrides, the timeline).
-- **Invoice rendering.** The browser's built-in viewer: PDFs in an `<iframe>` from a blob URL, images in an `<img>`. No pdf.js dependency.
+- **Invoice rendering.** PDFs are drawn page by page on canvases with pdf.js (`pdfjs-dist`), loaded lazily on first use; images are shown in an `<img>`. This replaced the browser's built-in viewer in an `<iframe>` (2026-10-01), because Chrome on Android has no inline PDF viewer and showed an empty pane. Zoom is the preview's own (−, fit to width, +), and canvases are capped at 16 million pixels for iOS Safari (`src/ui/pdfScale.ts`).
 - **Licence.** MIT.
 
 ---

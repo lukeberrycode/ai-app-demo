@@ -82,7 +82,7 @@ None, by design.
 
 - **marked**: converts Markdown to HTML. The in-app Help guide is `docs/user-guide.md`, rendered by marked when the app is built, so the guide and the documentation are the same text.
 
-The invoice preview uses the browser's built-in PDF and image viewers, so no rendering library is needed.
+- **pdfjs-dist** (pdf.js): Mozilla's PDF renderer, which draws each page of an uploaded PDF on a canvas for the invoice preview. Browsers' own PDF viewers are not available everywhere (Chrome on Android has none), so the app draws the pages itself to show the same preview on every device. It loads only when a PDF is shown, so it is not part of the main bundle. Images are shown as they are.
 
 ### Development tools
 

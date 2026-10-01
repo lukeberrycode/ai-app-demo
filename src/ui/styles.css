@@ -276,10 +276,48 @@ button.link {
   overflow: auto;
 }
 
-.preview iframe {
-  width: 100%;
+.pdf {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  border: 0;
+}
+
+.pdf-toolbar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pdf-toolbar button {
+  min-width: 2.5em;
+  padding: 2px 8px;
+}
+
+.pdf-toolbar a {
+  margin-left: auto;
+}
+
+.pdf-pages {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  padding: 8px;
+  background: var(--bg);
+}
+
+.pdf-pages canvas {
+  display: block;
+  margin: 0 auto 8px;
+  background: #fff;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+.pdf-status {
+  color: var(--muted);
+  text-align: center;
 }
 
 .preview img {

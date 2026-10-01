@@ -1,4 +1,6 @@
-/** The uploaded file, shown with the browser's own PDF and image viewers. */
+import { PdfPages } from "./PdfPages.tsx";
+
+/** The uploaded file: PDFs drawn page by page with pdf.js, images as they are. */
 export function InvoicePreview({
   url,
   mediaType,
@@ -11,7 +13,7 @@ export function InvoicePreview({
   return (
     <div className="preview">
       {mediaType === "application/pdf" ? (
-        <iframe src={url} title={`Invoice preview: ${fileName}`} />
+        <PdfPages url={url} fileName={fileName} />
       ) : (
         <img src={url} alt={`Invoice preview: ${fileName}`} />
       )}
