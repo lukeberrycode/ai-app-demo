@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Project:** Dealership Invoice Extractor (demo). This file holds the architecture and plan. Time estimates live separately in `ESTIMATES.md` and are for reference only.
 
-**Current status:** All steps in §5 are complete. Step 8 (Polish and documentation) was checked live on 2026-10-01: the sample picker, extraction, override, edit, approve, audit trail and session history on desktop, and the phone layout and dark mode at 390 px. Remaining ideas are in `docs/ux-gaps.md`. Update this line when new work starts.
+**Current status:** Steps 0–8 in §5 are complete; Step 9 (human code review) is not started. Step 8 (Polish and documentation) was checked live on 2026-10-01: the sample picker, extraction, override, edit, approve, audit trail and session history on desktop, and the phone layout and dark mode at 390 px. Remaining ideas are in `docs/ux-gaps.md`. Update this line when new work starts.
 
 ---
 
@@ -314,6 +314,12 @@ Each step ends in a working, deployable state. Deploying early matters more than
   - a "Try this" section that walks through the samples with deliberate errors, so the whole flow can be seen in under a minute;
   - design decisions and trade-offs (why validation is deterministic, why the key stays server-side, why margin-scheme handling matters);
   - local setup instructions.
+
+**Step 9 — Human code review**
+
+- Before the project moves beyond the demo phase, a human reviews all of the code.
+- This is the final safeguard: no code is used in anger without human review, while the prototype can still be built quickly with reasonable safeguards at every stage.
+- Only a human can mark this step done.
 
 ---
 
